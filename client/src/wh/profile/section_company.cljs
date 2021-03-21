@@ -1,11 +1,8 @@
 (ns wh.profile.section-company
-  (:require [re-frame.core :refer [dispatch]]
-            [wh.components.common :refer [link]]
+  (:require [wh.components.common :refer [link]]
             [wh.components.modal :as modal]
             [wh.logged-in.profile.components :as components]
             [wh.profile.db :as profile]
-            [wh.profile.events :as events]
-            [wh.profile.subs :as subs]
             [wh.styles.profile :as styles]
             [wh.util :as util]
             [wh.subs :refer [<sub]]))
@@ -57,8 +54,7 @@
   (let [current?           (= type :current)
         {:keys [job note]} application
         cover-letter-url   (get-in application [:cover-letter :file :url])
-        cv-url             (get-in user [:cv :file :url])
-        cv-visible?        (<sub [::subs/cv-visible?])]
+        cv-url             (get-in user [:cv :file :url])]
     [:div {:class styles/job-application__wrapper}
      [:div {:class styles/job-application}
       [components/job-link job]
@@ -70,13 +66,9 @@
                                        :text     "View cover letter"
                                        :new-tab? true}])
          (if cv-url
-           [:div 
-            [:a {:class styles/underline-link :on-click #(dispatch [::events/show-user-cv (not cv-visible?)])} (if cv-visible? "Hide CV" "Show CV")]
-            [:p ""]
-            [components/underline-link {:href     cv-url
-                                        :text     "Download CV"
-                                        :new-tab? true
-                                        :download true}]]
+           [components/underline-link {:href     cv-url
+                                       :text     "View CV"
+                                       :new-tab? true}]
            [:div {:class styles/job-application__missing}
             "No CV provided."])
          [manager-note note]])]
